@@ -43,11 +43,10 @@ def main() -> None:
         raise SystemExit(f"MEDIA_DIR does not exist: {media_dir}")
 
     logger.info(
-        "Starting subtitle generator | model=%s scan_interval=%ds media_dir=%s label=%s",
+        "Starting subtitle generator | model=%s scan_interval=%ds media_dir=%s",
         settings.whisper_model,
         settings.scan_interval,
         media_dir,
-        settings.subtitle_label,
     )
 
     if not settings.dry_run:

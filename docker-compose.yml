@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    image: generate-subtitles-app:latest
+    env_file:
+      - .env
+    environment:
+      MEDIA_DIR: /media
+    volumes:
+      - type: bind
+        source: "${HOST_MEDIA_DIR:-/media}"
+        target: /media
+      - whisper-cache:/root/.cache/huggingface
+    restart: unless-stopped
+
+volumes:
+  whisper-cache:

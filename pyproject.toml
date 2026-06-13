@@ -1,0 +1,11 @@
+[project]
+name = "generate-subtitles-app"
+version = "0.1.0"
+description = "Automatically generate SRT subtitles for video files using Whisper"
+requires-python = ">=3.12"
+dependencies = [
+    "faster-whisper>=1.1.1",
+    "ffmpeg-python>=0.2.0",
+    "pydantic-settings>=2.7.0",
+    "pysubs2>=1.8.0",
+]

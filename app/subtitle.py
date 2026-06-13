@@ -35,13 +35,12 @@ def words_to_subs(words: list, max_words: int, max_chars: int, max_gap: float) -
     return subs
 
 
-def subtitle_path(video_path: Path, language: str) -> Path:
-    name = f"{video_path.stem}.{language}.{settings.subtitle_label}.srt"
-    return video_path.parent / name
+def subtitle_path(video_path: Path) -> Path:
+    return video_path.with_suffix(".srt")
 
 
 def write_subtitle(video_path: Path, words: list, language: str) -> Path:
-    srt_path = subtitle_path(video_path, language)
+    srt_path = subtitle_path(video_path)
     subs = words_to_subs(words, settings.max_words_per_line, settings.max_chars_per_line, settings.max_gap_seconds)
     subs.save(str(srt_path))
     logger.info("Wrote %d subtitle lines: %s", len(subs), srt_path.name)

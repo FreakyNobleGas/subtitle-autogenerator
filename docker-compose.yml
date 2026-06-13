@@ -2,6 +2,10 @@ services:
   app:
     build: .
     image: generate-subtitles-app:latest
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
     environment:
       MEDIA_DIR: /media
     volumes:

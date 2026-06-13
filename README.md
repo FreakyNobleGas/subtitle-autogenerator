@@ -8,7 +8,7 @@ A Docker service that automatically generates SRT subtitle files for video files
 2. Skips any video that already has a `.srt` file with a matching name
 3. Extracts audio via ffmpeg and transcribes it with Whisper (CPU, int8)
 4. Groups word-level timestamps into readable subtitle lines
-5. Writes an SRT file next to the video: `{name}.{language}.{label}.srt`
+5. Writes an SRT file next to the video: `{name}.srt`
 6. Sleeps for `SCAN_INTERVAL` seconds and repeats
 
 ## Quick start
@@ -29,7 +29,6 @@ All settings are read from environment variables.
 | `LANGUAGE` | _(auto-detect)_ | Force a specific language code (e.g. `en`, `es`, `fr`) |
 | `VIDEO_EXTENSIONS` | `.mkv,.mp4,.avi,.mov,.m4v,.wmv` | Comma-separated list of video extensions to process |
 | `MAX_WORKERS` | `1` | Number of videos to transcribe in parallel |
-| `SUBTITLE_LABEL` | `Media Server Autogen Sub` | Label appended to the SRT filename |
 | `MAX_WORDS_PER_LINE` | `7` | Max words per subtitle line |
 | `MAX_CHARS_PER_LINE` | `42` | Max characters per subtitle line |
 | `MAX_GAP_SECONDS` | `1.5` | Silence gap (seconds) that forces a new subtitle line |

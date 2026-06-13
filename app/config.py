@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     language: str | None = None
     video_extensions: str = ".mkv,.mp4,.avi,.mov,.m4v,.wmv"
     max_workers: int = 1
-    subtitle_label: str = "Media Server Autogen Sub"
     max_words_per_line: int = 7
     max_chars_per_line: int = 42
     max_gap_seconds: float = 1.5

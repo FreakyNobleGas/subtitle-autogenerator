@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     max_words_per_line: int = 7
     max_chars_per_line: int = 42
     max_gap_seconds: float = 1.5
+    dry_run: bool = False
 
     @property
     def video_ext_set(self) -> frozenset[str]:

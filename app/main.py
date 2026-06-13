@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 def process(video_path: Path) -> None:
+    if settings.dry_run:
+        logger.info("[DRY RUN] Would transcribe: %s", video_path)
+        return
     try:
         segments, language = transcribe(video_path)
         write_subtitle(video_path, segments, language)
@@ -47,8 +50,9 @@ def main() -> None:
         settings.subtitle_label,
     )
 
-    # Pre-load model so the first scan doesn't pay the loading penalty mid-transcription
-    get_model()
+    if not settings.dry_run:
+        # Pre-load model so the first scan doesn't pay the loading penalty mid-transcription
+        get_model()
 
     with ThreadPoolExecutor(max_workers=settings.max_workers) as executor:
         while True:

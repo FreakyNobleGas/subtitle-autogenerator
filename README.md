@@ -19,7 +19,7 @@ HOST_MEDIA_DIR=/path/to/your/media docker compose up -d
 
 ## Configuration
 
-All settings are read from environment variables or a `.env` file.
+All settings are read from environment variables.
 
 | Variable | Default | Description |
 |---|---|---|
@@ -33,6 +33,7 @@ All settings are read from environment variables or a `.env` file.
 | `MAX_WORDS_PER_LINE` | `7` | Max words per subtitle line |
 | `MAX_CHARS_PER_LINE` | `42` | Max characters per subtitle line |
 | `MAX_GAP_SECONDS` | `1.5` | Silence gap (seconds) that forces a new subtitle line |
+| `DRY_RUN` | `false` | Log what would be transcribed without writing any files |
 
 ## Docker Compose
 
@@ -54,6 +55,27 @@ volumes:
 ```
 
 The `whisper-cache` volume persists the downloaded model weights so they aren't re-downloaded on container restart.
+
+## Multiple drives
+
+If your media is spread across multiple hard drives, mount each one as a subdirectory under `/media`. The scanner recurses into all subdirectories, so every drive will be picked up automatically — no extra configuration needed.
+
+```yaml
+volumes:
+  - /mnt/drive1:/media/drive1
+  - /mnt/drive2:/media/drive2
+  - /mnt/drive3:/media/drive3
+  - whisper-cache:/root/.cache/huggingface
+```
+
+## Dry run
+
+Set `DRY_RUN=true` to scan and log which videos would be transcribed without actually running Whisper or writing any files. Useful for verifying your volume mounts before a full run.
+
+```yaml
+environment:
+  DRY_RUN: "true"
+```
 
 ## Model sizes
 

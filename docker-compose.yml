@@ -2,8 +2,6 @@ services:
   app:
     build: .
     image: generate-subtitles-app:latest
-    env_file:
-      - .env
     environment:
       MEDIA_DIR: /media
     volumes:

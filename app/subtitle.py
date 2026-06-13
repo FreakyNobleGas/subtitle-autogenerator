@@ -8,7 +8,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 
-def words_to_subs(words: list, max_words: int, max_chars: int) -> pysubs2.SSAFile:
+def words_to_subs(words: list, max_words: int, max_chars: int, max_gap: float) -> pysubs2.SSAFile:
     subs = pysubs2.SSAFile()
     group: list = []
 
@@ -25,8 +25,9 @@ def words_to_subs(words: list, max_words: int, max_chars: int) -> pysubs2.SSAFil
         token = word.word.strip()
         if not token:
             continue
+        gap = (word.start - group[-1].end) if group else 0
         projected = sum(len(w.word.strip()) for w in group) + len(group) + len(token)
-        if group and (len(group) >= max_words or projected > max_chars):
+        if group and (gap > max_gap or len(group) >= max_words or projected > max_chars):
             flush()
         group.append(word)
 
@@ -41,7 +42,7 @@ def subtitle_path(video_path: Path, language: str) -> Path:
 
 def write_subtitle(video_path: Path, words: list, language: str) -> Path:
     srt_path = subtitle_path(video_path, language)
-    subs = words_to_subs(words, settings.max_words_per_line, settings.max_chars_per_line)
+    subs = words_to_subs(words, settings.max_words_per_line, settings.max_chars_per_line, settings.max_gap_seconds)
     subs.save(str(srt_path))
     logger.info("Wrote %d subtitle lines: %s", len(subs), srt_path.name)
     return srt_path

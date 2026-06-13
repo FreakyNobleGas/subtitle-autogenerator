@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     subtitle_label: str = "Media Server Autogen Sub"
     max_words_per_line: int = 7
     max_chars_per_line: int = 42
+    max_gap_seconds: float = 1.5
 
     @property
     def video_ext_set(self) -> frozenset[str]:

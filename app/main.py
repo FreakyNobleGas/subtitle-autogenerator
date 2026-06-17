@@ -25,6 +25,9 @@ def process(video_path: Path) -> None:
         write_subtitle(video_path, segments, language)
     except Exception:
         logger.exception("Failed to process %s", video_path)
+        skip_marker = video_path.with_suffix(".subtitle-skip")
+        skip_marker.touch()
+        logger.warning("Marked as skipped — remove %s to retry", skip_marker.name)
 
 
 def run_scan(media_dir: Path, executor: ThreadPoolExecutor) -> None:

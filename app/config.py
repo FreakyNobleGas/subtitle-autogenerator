@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     max_chars_per_line: int = 42
     max_gap_seconds: float = 1.5
     dry_run: bool = False
+    max_duration_seconds: int = 10_800  # 3 hours; files longer than this are skipped
 
     @property
     def video_ext_set(self) -> frozenset[str]:

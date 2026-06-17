@@ -21,6 +21,21 @@ def get_model() -> WhisperModel:
     return _model
 
 
+def get_duration(video_path: Path) -> float:
+    result = subprocess.run(
+        [
+            "ffprobe", "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            str(video_path),
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        check=True,
+    )
+    return float(result.stdout.strip())
+
+
 def extract_audio(video_path: Path) -> bytes:
     result = subprocess.run(
         [
@@ -38,6 +53,13 @@ def extract_audio(video_path: Path) -> bytes:
 
 def transcribe(video_path: Path) -> tuple[list, str]:
     """Return (words, detected_language). words is a flat list of faster-whisper Word objects."""
+    duration = get_duration(video_path)
+    limit = settings.max_duration_seconds
+    if duration > limit:
+        raise ValueError(
+            f"File duration {duration/3600:.1f}h exceeds limit ({limit/3600:.1f}h), skipping"
+        )
+
     logger.info("Extracting audio from %s", video_path.name)
     audio_bytes = extract_audio(video_path)
 

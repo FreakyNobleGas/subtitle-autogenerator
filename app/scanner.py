@@ -23,6 +23,9 @@ def find_videos_missing_subtitles(media_dir: Path) -> list[Path]:
             continue
         if path.suffix.lower() not in settings.video_ext_set:
             continue
+        if path.with_suffix(".subtitle-skip").exists():
+            logger.debug("Skipping (marked as failed): %s", path.name)
+            continue
         if _has_any_srt(path):
             logger.debug("Skipping (subtitle exists): %s", path.name)
             continue

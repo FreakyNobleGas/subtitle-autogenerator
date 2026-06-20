@@ -6,7 +6,7 @@ from pathlib import Path
 from app.config import settings
 from app.scanner import find_videos_missing_subtitles
 from app.subtitle import write_subtitle
-from app.transcriber import get_model, transcribe
+from app.transcriber import get_duration, get_model, transcribe
 
 logging.basicConfig(
     level=logging.INFO,
@@ -19,6 +19,13 @@ logger = logging.getLogger(__name__)
 def process(video_path: Path) -> None:
     if settings.dry_run:
         logger.info("[DRY RUN] Would transcribe: %s", video_path)
+        return
+    duration = get_duration(video_path)
+    if duration > settings.max_duration_seconds:
+        logger.warning(
+            "Skipping %s — duration %.1fh exceeds limit %.1fh",
+            video_path.name, duration / 3600, settings.max_duration_seconds / 3600,
+        )
         return
     try:
         segments, language = transcribe(video_path)

@@ -53,13 +53,6 @@ def extract_audio(video_path: Path) -> bytes:
 
 def transcribe(video_path: Path) -> tuple[list, str]:
     """Return (words, detected_language). words is a flat list of faster-whisper Word objects."""
-    duration = get_duration(video_path)
-    limit = settings.max_duration_seconds
-    if duration > limit:
-        raise ValueError(
-            f"File duration {duration/3600:.1f}h exceeds limit ({limit/3600:.1f}h), skipping"
-        )
-
     logger.info("Extracting audio from %s", video_path.name)
     audio_bytes = extract_audio(video_path)
 

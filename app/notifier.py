@@ -1,5 +1,6 @@
 import json
 import logging
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -24,12 +25,21 @@ def send_language_alert(video_path: Path, detected_language: str, desired_langua
     request = urllib.request.Request(
         settings.alert_webhook_url,
         data=data,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": (
+                "subtitle-autogenerator "
+                "(https://github.com/freakynoblegas/subtitle-autogenerator, 1.0)"
+            ),
+        },
         method="POST",
     )
     try:
         with urllib.request.urlopen(request, timeout=settings.alert_webhook_timeout):
             pass
         logger.info("Sent alert for %s", video_path.name)
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")
+        logger.warning("Alert for %s rejected: HTTP %s %s", video_path.name, exc.code, body)
     except Exception:
         logger.warning("Failed to send alert for %s", video_path.name, exc_info=True)

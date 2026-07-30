@@ -33,6 +33,9 @@ All settings are read from environment variables.
 | `MAX_CHARS_PER_LINE` | `42` | Max characters per subtitle line |
 | `MAX_GAP_SECONDS` | `1.5` | Silence gap (seconds) that forces a new subtitle line |
 | `DRY_RUN` | `false` | Log what would be transcribed without writing any files |
+| `ALERT_WEBHOOK_URL` | _(unset)_ | Webhook URL to POST an alert to when a video's audio isn't in the desired language. Leave unset to disable alerts. |
+| `ALERT_LANGUAGE` | `en` | Desired subtitle language (ISO code, as Whisper reports it). An alert fires when the detected audio language differs. |
+| `ALERT_WEBHOOK_TIMEOUT` | `10.0` | Seconds to wait on the webhook request before giving up. |
 
 ## Docker Compose
 
@@ -75,6 +78,31 @@ Set `DRY_RUN=true` to scan and log which videos would be transcribed without act
 environment:
   DRY_RUN: "true"
 ```
+
+## Language alerts
+
+Optional: get notified when a video's audio isn't in the language you want. When
+a video is transcribed and Whisper detects an audio language different from
+`ALERT_LANGUAGE` (default `en`), the service POSTs an alert to `ALERT_WEBHOOK_URL`.
+The subtitle is still generated as usual — the alert is just a heads-up so you
+can source proper subtitles.
+
+The feature is off unless `ALERT_WEBHOOK_URL` is set. On startup the service logs
+whether alerts are enabled.
+
+The payload is a generic JSON body — `{"content": "..."}` — which renders
+directly in a Discord channel webhook, but works with any receiver that accepts a
+JSON POST.
+
+```yaml
+environment:
+  ALERT_WEBHOOK_URL: "https://example.com/webhook"
+  ALERT_LANGUAGE: "en"
+```
+
+Note: `LANGUAGE` *forces* the transcription language, so if you set it the
+detected language always matches and no alert can fire. Leave `LANGUAGE` unset
+(auto-detect) for alerts to work.
 
 ## Model sizes
 

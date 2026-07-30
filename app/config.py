@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     max_gap_seconds: float = 1.5
     dry_run: bool = False
     max_duration_seconds: int = 10_800  # 3 hours; files longer than this are skipped
+    alert_webhook_url: str | None = None
+    alert_language: str = "en"
+    alert_webhook_timeout: float = 10.0
 
     @property
     def video_ext_set(self) -> frozenset[str]:

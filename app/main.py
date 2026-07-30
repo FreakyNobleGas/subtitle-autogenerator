@@ -3,6 +3,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from app import notifier
 from app.config import settings
 from app.scanner import find_videos_missing_subtitles
 from app.subtitle import write_subtitle
@@ -30,6 +31,8 @@ def process(video_path: Path) -> None:
     try:
         segments, language = transcribe(video_path)
         write_subtitle(video_path, segments, language)
+        if language.lower() != settings.alert_language.lower():
+            notifier.send_language_alert(video_path, language, settings.alert_language)
     except Exception:
         logger.exception("Failed to process %s", video_path)
         skip_marker = video_path.with_suffix(".subtitle-skip")
@@ -58,6 +61,14 @@ def main() -> None:
         settings.scan_interval,
         media_dir,
     )
+
+    if notifier.is_configured():
+        logger.info(
+            "Webhook alerts enabled: will notify when a video's detected audio language is not '%s'",
+            settings.alert_language,
+        )
+    else:
+        logger.info("Webhook alerts disabled (set ALERT_WEBHOOK_URL to enable)")
 
     if not settings.dry_run:
         # Pre-load model so the first scan doesn't pay the loading penalty mid-transcription

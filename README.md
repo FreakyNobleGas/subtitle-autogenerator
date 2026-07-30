@@ -79,6 +79,19 @@ environment:
   DRY_RUN: "true"
 ```
 
+## Stale subtitles
+
+If the subtitle the app generated (`{name}.srt`) is **older** than its video
+file, the app assumes the video was replaced (for example, you deleted a
+wrong-language copy and re-downloaded it) and regenerates the subtitle in place on
+the next scan. Detection is by modification time, so a healthy subtitle — always
+written after its video already exists — is never regenerated.
+
+Only the app's own `{name}.srt` is touched; differently-named subtitle files
+(e.g. `movie.en.srt` from Plex or Bazarr) are left alone. A video previously
+marked failed (`.subtitle-skip`) is retried once it becomes newer than its
+marker.
+
 ## Language alerts
 
 Optional: get notified when a video's audio isn't in the language you want. When

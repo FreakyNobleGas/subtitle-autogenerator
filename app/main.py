@@ -33,6 +33,8 @@ def process(video_path: Path) -> None:
         write_subtitle(video_path, segments, language)
         if language.lower() != settings.alert_language.lower():
             notifier.send_language_alert(video_path, language, settings.alert_language)
+        # Clear any stale failure marker left over from a previous (now-replaced) video.
+        video_path.with_suffix(".subtitle-skip").unlink(missing_ok=True)
     except Exception:
         logger.exception("Failed to process %s", video_path)
         skip_marker = video_path.with_suffix(".subtitle-skip")
